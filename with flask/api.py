@@ -1,16 +1,16 @@
 from flask import Flask, request, render_template
 app = Flask(__name__)
 
-from scan_with_picture import scan_with_picture
-from code_test import *
+from picture import scan_with_picture
+from pdf import *
 
 
 @app.route("/imageBase64", methods=["POST"])
-def textTospeech():
+def imageBase64():
 
     imageURL = request.form['text']
-    scan_with_picture(imageURL)
-    return "response from imageBase64"
+    msgs = scan_with_picture(imageURL) 
+    return {"msgs" : msgs}
 
 
 @app.route("/pdfBase64Upload", methods=["POST"])
@@ -22,9 +22,9 @@ def pdfBase64():
 
 @app.route("/pdfBase64GetData", methods=["POST"])
 def pdfBase64GetData():
-    scan_with_pdf()
-    return "response from pdfBase64GetData"
-
+    msgs =  scan_with_pdf()
+    print(len(msgs),"length",msgs)
+    return {"msgs" : msgs}
 
 @app.route('/')
 def home():

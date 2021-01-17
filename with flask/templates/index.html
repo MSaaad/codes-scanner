@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Code scanner</title>
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+	<link rel="stylesheet" href="../static/styles/main.css">
+	<link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p" crossorigin="anonymous"/>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<script>
+	</script>
+	 <title>C-Boys Scanner</title>
+	 <style>
+		 .fa-times:hover{
+			 color: white;
+		 }
+		 .errors{
+			width: 100%;
+			display: flex;
+			border: 2px solid white;
+			margin: auto;
+			width: 600px;
+			height: 300px;
+			max-height: 400px;
+			background-color: #006080;
+			overflow-y: scroll;
+			margin: auto;
+			flex-direction: column;
+			padding: 15px;
+			/* justify-content: center; */
+		 }
+		 .errorTop{
+			width: 100%;
+			position: absolute;
+			display: none;
+			z-index: 99999;
+			justify-content: center;
+			align-items: center;
+			align-content: center;
+			align-self: center;
+		 }
+	 </style>
+	 
+</head>
+<body style="font-family:sans-serif" >
+	<nav>
+				<ul class="navbar" style="display: flex; justify-content: center;">
+					<li>QR and Barcode Scanner</li>
+				  </ul>
+	</nav>
+	<h4 style="margin-left: auto; margin-right: auto; margin-top: 20px;margin-bottom: 20px; border-bottom: 4px solid black; width:70%; text-align: center;"> A QR and barcode scanner that scans the barcode from pdf and image, decodes the data and saves it in the csv file at run time. </h4> 
+	<div class="container">
+		<div class="box" >
+			<h2 style="color: white; text-transform: uppercase;  margin-top: 30px;
+			">Upload through PDF</h2>
+			<label style='color: whitesmoke; margin-left: 15%;margin-top: 20%;'>
+
+			<input id="uploadPdf" onchange="file('uploadPdf')" name="upload pdf" type="file" accept="application/pdf" />
+		
+			</label>
+		</div>
+
+		<div class="box">
+			<h2 id="chck" style="color: white; text-transform: uppercase;margin-top: 30px;">Upload through Image</h2>
+			<label style='color: whitesmoke; margin-left: 15%;margin-top: 20%;'>
+				<input id="uploadImg" onchange="file('uploadImg')"  type="file" />
+			</label>
+			<img style="display: none;" id="image" width="200" height="300" 
+				src=""
+				alt="Please Upload a Picture"/>
+			</div> 
+		</div>
+		<div style='display: flex; justify-content:center; margin: 10px;'>
+			<button onclick="extractPdfBarcodes()" id="pdfBtn"  type="button" value="Extract Barcodes" class="btn btn-dark" style='margin: 10px;' > Extract PDF Barcodes</button>
+			<button onclick="extractImageBarcodes()" type="button" value="Extract Barcodes" class="btn btn-dark" style='margin: 10px;' > Extract IMG Barcodes</button>
+		</div>
+	<div id="errorTop" class="errorTop">
+		<p onclick="closeErrors()" style="position: absolute;top: 8px;margin-left: 68%;z-index: 9999999; float: right;"><i class="fas fa-times"></i></p>
+		<div id="errors" class="errors">
+				<p></p>
+		</div>
+	</div>
+	<!-- <div style="position: absolute;bottom: 0;margin-left: 29%;">
+				<button onclick="extractPdfBarcodes()" type="button" value="Extract Barcodes" class="btn btn-outline-dark" > Extract PDF Barcodes</button>
+		<button onclick="extractImageBarcodes()" type="button" value="Extract Barcodes" class="btn btn-outline-dark" > Extract IMG Barcodes</button>
+	</div>	 -->
+
+	</body>
+	<script>
+		const errorDivID = document.getElementById("errorTop")
+		const id = document.getElementById("errors")
+		let imageBase64 = ""
+		let pdfBase64 = ""
+		extractImageBarcodes = () =>{
+			if(imageBase64 !== ""){
+				$.ajax({
+					url: "/imageBase64",
+					type: "POST",
+					data: { text: imageBase64 }
+				})
+				.then(res=>{
+					// console.log(res)
+					renderErrors(res)
+					alert("Scanning Operation Is Completed.")
+				})
+			}else{
+				alert("Kindly Upload An Image First")
+				
+			}
+
+		}
+		extractPdfBarcodes = () =>{
+			pdfBtn =  document.getElementById("pdfBtn")
+			pdfBtn.disabled = true
+			if(pdfBase64 !== ""){
+				$.ajax({
+					url: "/pdfBase64GetData",
+					type: "POST",
+					data: { text: pdfBase64 }
+				})
+				.then(res=>{
+					pdfBtn.disabled = false
+					renderErrors(res)
+					// console.log(res)
+					alert("Scanning Operation Is Completed.")
+				})
+			}else{
+				alert("Kindly Upload A Pdf First")
+			}
+
+		}
+		file = (id) =>  {
+
+			const reader = new FileReader();
+			reader.onload = () => {
+				if(id === "uploadImg"){
+					document.getElementById("image").style.display = "block"
+					document.getElementById("image").src = reader.result	
+					imageBase64 = reader.result		
+				}else{
+
+					pdfBase64 = reader.result
+					$.ajax({
+						url: "/pdfBase64Upload",
+						type: "POST",
+						data: { text: pdfBase64 }
+					})
+					.then(res=>{
+						// console.log(res)
+					})
+				}
+			}
+
+			reader.readAsDataURL(document.getElementById(id).files[0]);
+    
+			}
+			closeErrors =() =>{
+				errorDivID.style.display = "none"
+			}
+			renderErrors = (res)=>{
+				if(res.msgs.length !== 0){
+						errorDivID.style.display = "block"
+					}	
+					res.msgs.forEach((elem,index)=>{
+						if(index == 0){
+							id.innerHTML = `<p style='color: white;'>${elem}</p>`
+						}else{
+							id.innerHTML += `<p style='color: white;'>${elem}</p>`
+						}
+				})
+			}
+	 </script>
+</html>

@@ -1,9 +1,11 @@
 html {
   overflow: scroll;
+  height: 100%;
+  width: 100%;
 }
 ::-webkit-scrollbar {
   width: 0px;
-  background: transparent; /* make scrollbar transparent */
+  background: transparent; 
 }
 .navbar {
   list-style-type: none;
@@ -17,19 +19,15 @@ html {
   margin-top: 30px;
   margin-left: auto;
   margin-right: auto;
-  border-radius: 3px;
+  border-radius: 140px;
   color: white;
-  /* box-shadow: 1px 1px 7px 1px black; */
+  box-shadow: 2px 2px 7px 1px black;
 }
 .container {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   justify-content: center;
   align-items: center;
 }
@@ -37,34 +35,21 @@ html {
   background: #006080;
   padding: 10px;
   margin: 10px;
-  width: 300px;
+  width: 350px;
   height: 300px;
   border-radius: 7px;
   box-shadow: 1px 3px 7px 1px black;
   text-align: center;
-overflow: scroll;
+  justify-content: center;
+  align-items: center;
+  overflow: scroll;
 }
-.box:hover{
+.box:hover {
   box-shadow: 1px 3px 10px 1px black;
-  transform: scale(1.07);
-  transition: 0.4s ease-in-out;
-}
-.inputbutton {
-  background: #006080;
-  padding: 5px;
-  width: auto;
-  margin: 60px;
-  text-align: center;
-  color: white;
-  border-color: #006080;
-}
-
-.inputbutton:hover{
-  background: inherit;
-  box-shadow: 1px 1px 10px 1px black;
-  /* transform: scale(1.07); */
+  transform: scale(1.08);
   transition: 0.3s ease-in-out;
 }
+
 .main > .message {
   width: 100%;
   /* margin: auto; */
@@ -109,8 +94,7 @@ input {
 }
 .right > * {
   float: right;
-  background-color: 
-  ;
+  background-color: ;
 }
 form > div {
   display: inline-block;
@@ -172,7 +156,6 @@ h4 {
   font-size: 1.3em !important;
   cursor: pointer;
 }
-
 
 a:hover {
   color: white;
